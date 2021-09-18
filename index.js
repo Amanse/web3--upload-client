@@ -16,7 +16,6 @@ app.get('/download', async (req, res) => {
     console.log(url)
     await download(url, 'downloads')
     const cidr =  await uploadFiles()
-    
     res.send(cidr)
 })
 
@@ -27,6 +26,7 @@ async function uploadFiles() {
     console.log(files)
 
     const cid = await client.put(files)
+    console.log('uploaded')
     
     return cid
     
