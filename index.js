@@ -23,6 +23,10 @@ app.get('/', (req, res) => {
 
 app.post('/download', async (req, res) => {
     const {url, name, ext} = req.body
+    doTheShit(url, name, ext)
+})
+
+async function doTheShit(url, name, ext) {
     fs.mkdir(__dirname+"/downloads/"+name, err => {
         if (err) {
             console.error(err)
@@ -40,9 +44,9 @@ app.post('/download', async (req, res) => {
         }
         console.log(data)
         const cidr =  await uploadFiles(name, ext)
-        res.send(cidr)
     })
-})
+}
+
 
 async function uploadFiles(name, ext) {
     const client = new web3client.Web3Storage({token: process.env.TOKEN})
