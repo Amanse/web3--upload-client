@@ -19,7 +19,7 @@
         form.addEventListener("submit", (e) => {
             e.preventDefault()
             const url = document.getElementById("url").value
-            fetch(`/download/?url=${url}`)
+            fetch(`/download?url=${url}`)
             .then(data => data.text())
             .then(respon => {
                 document.getElementById("linkToFile").innerHTML="<h3><a href=https://dweb.link/ipfs/"+respon+">"+respon+"</a></h3>"
