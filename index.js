@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/download', async (req, res) => {
-    const {url, name} = req.body
+    const {url, name, ext} = req.body
     fs.mkdir(__dirname+"/downloads/"+name, err => {
         if (err) {
             console.error(err)
@@ -32,18 +32,19 @@ app.post('/download', async (req, res) => {
     console.log("Downloading"+url) 
     await downloader.download({
         uri: url,
-        destinationDir: __dirname + '/downloads/'+name+"/"
+        destinationDir: __dirname + '/downloads/'+name+"/",
+        destinationFileName: name+"."+ext
     }, async (err, data)=>{
         if (err) {
             console.log(err)
         }
         console.log(data)
-        const cidr =  await uploadFiles(name)
+        const cidr =  await uploadFiles(name, ext)
         res.send(cidr)
     })
 })
 
-async function uploadFiles(name) {
+async function uploadFiles(name, ext) {
     const client = new web3client.Web3Storage({token: process.env.TOKEN})
 
     const files = await getFiles(name)

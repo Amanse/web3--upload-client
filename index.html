@@ -9,6 +9,7 @@
 <body>
     <form id="uploadForm" >
         <input type="text" placeholder="name" id="name" />
+        <input type="text" placeholder="ext" id="ext" />
         <input type="text" placeholder="url" id="url" />
         <input type="submit" />
     </form>
@@ -21,13 +22,14 @@
             e.preventDefault()
             const url = document.getElementById("url").value
             const name = document.getElementById("name").value
+            const ext = document.getElementById("ext").value
             await fetch(`/download`,{
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
                 method: 'POST',
-                body: JSON.stringify({url, name})
+                body: JSON.stringify({url, name, ext})
             })
             .then(data => data.text())
             .then(respon => {
