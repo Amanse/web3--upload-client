@@ -2,6 +2,7 @@ const express = require('express')
 const SmartDownloader = require('smart-downloader');
 const web3client = require('web3.storage')
 const dotenv = require('dotenv')
+const fs = require('fs')
 
 const downloader = new SmartDownloader();
 
@@ -21,17 +22,23 @@ app.get('/', (req, res) => {
 })
 
 app.post('/download', async (req, res) => {
-    const {url} = req.body
+    const {url, name} = req.body
+    fs.mkdir(__dirname+"/downloads/"+name, err => {
+        if (err) {
+            console.error(err)
+        }
+        console.log("Made directory")
+    })
     console.log("Downloading"+url) 
     await downloader.download({
         uri: url,
-        destinationDir: __dirname + '/downloads/'
+        destinationDir: __dirname + '/downloads/'+name+"/"
     }, async (err, data)=>{
         if (err) {
             console.log(err)
         }
         console.log(data)
-        const cidr =  await uploadFiles(data.name)
+        const cidr =  await uploadFiles(name)
         res.send(cidr)
     })
 })
@@ -39,7 +46,7 @@ app.post('/download', async (req, res) => {
 async function uploadFiles(name) {
     const client = new web3client.Web3Storage({token: process.env.TOKEN})
 
-    const files = await getFiles()
+    const files = await getFiles(name)
     console.log(files)
 
     const cid = await client.put(files, {
@@ -52,8 +59,8 @@ async function uploadFiles(name) {
     
 }
 
-async function getFiles() {
-    const files = await web3client.getFilesFromPath('downloads')
+async function getFiles(name) {
+    const files = await web3client.getFilesFromPath(`downloads/${name}`)
     console.log(`reading ${files.length}`)
     return files
 }

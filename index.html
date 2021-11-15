@@ -8,6 +8,7 @@
 </head>
 <body>
     <form id="uploadForm" >
+        <input type="text" placeholder="name" id="name" />
         <input type="text" placeholder="url" id="url" />
         <input type="submit" />
     </form>
@@ -19,13 +20,14 @@
         form.addEventListener("submit", async (e) => {
             e.preventDefault()
             const url = document.getElementById("url").value
+            const name = document.getElementById("name").value
             await fetch(`/download`,{
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
                 method: 'POST',
-                body: JSON.stringify({url})
+                body: JSON.stringify({url, name})
             })
             .then(data => data.text())
             .then(respon => {
