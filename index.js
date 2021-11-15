@@ -1,31 +1,51 @@
 const express = require('express')
-const download = require('download')
+const SmartDownloader = require('smart-downloader');
 const web3client = require('web3.storage')
 const dotenv = require('dotenv')
+
+const downloader = new SmartDownloader();
 
 dotenv.config()
 
 const app = express()
+app.use(
+    express.urlencoded({
+      extended: true
+    })
+  )
+  
+app.use(express.json())
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 })
 
-app.get('/download', async (req, res) => {
-    const url = req.query.url
-    console.log(url)
-    await download(url, 'downloads')
-    const cidr =  await uploadFiles()
-    res.send(cidr)
+app.post('/download', async (req, res) => {
+    const {url} = req.body
+    console.log("Downloading"+url) 
+    await downloader.download({
+        uri: url,
+        destinationDir: __dirname + '/downloads/'
+    }, async (err, data)=>{
+        if (err) {
+            console.log(err)
+        }
+        console.log(data)
+        const cidr =  await uploadFiles(data.name)
+        res.send(cidr)
+    })
 })
 
-async function uploadFiles() {
+async function uploadFiles(name) {
     const client = new web3client.Web3Storage({token: process.env.TOKEN})
 
     const files = await getFiles()
     console.log(files)
 
-    const cid = await client.put(files)
+    const cid = await client.put(files, {
+        wrapWithDirectory: false,
+        name: name
+    })
     console.log('uploaded')
     
     return cid

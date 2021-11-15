@@ -11,8 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^10.0.0",
-    "download": "^8.0.0",
     "express": "^4.17.1",
+    "smart-downloader": "^1.2.1",
     "web3.storage": "^3.3.2"
   }
 }
